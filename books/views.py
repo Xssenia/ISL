@@ -1,4 +1,8 @@
+from datetime import date
+
 from django.shortcuts import render, redirect, get_object_or_404
+
+from loans.models import Reservation
 from .forms import *
 from .models import *
 from django.urls import reverse_lazy
@@ -32,21 +36,37 @@ def book_list(request):
         'selected_title': title_filter
     })
 
-from django.shortcuts import render, get_object_or_404
-from loans.models import Reservation
-from datetime import date
-
 def book_detail(request, pk):
     book = get_object_or_404(Book.objects.prefetch_related('authors', 'genres'), pk=pk)
 
     user_has_active_reservation = False
+
     if request.user.is_authenticated:
-        user_has_active_reservation = Reservation.objects.filter(
+        # Отладочный вывод
+        print("Пользователь аутентифицирован")
+
+        # Проверка активных бронирований
+        active_reservation_exists = Reservation.objects.filter(
             reader=request.user,
             copy__book=book,
-            status__status_name='Создана',
+            status__status_name__in=['Создана', 'Активна'],
             reservation_end_date__gte=date.today()
         ).exists()
+
+        if active_reservation_exists:
+            user_has_active_reservation = True
+            print("Найдено активное бронирование")
+
+        # Проверка завершённых бронирований
+        closed_reservation_exists = Reservation.objects.filter(
+            reader=request.user,
+            copy__book=book,
+            status__status_name__in=['Закрыта', 'Истекла', 'Отменена']
+        ).exists()
+
+        if not active_reservation_exists and closed_reservation_exists:
+            user_has_active_reservation = False
+            print("Все бронирования завершены")
 
     return render(
         request,
@@ -56,6 +76,7 @@ def book_detail(request, pk):
             'user_has_active_reservation': user_has_active_reservation
         }
     )
+
 
 
 def book_create(request):

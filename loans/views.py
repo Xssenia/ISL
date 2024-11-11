@@ -29,13 +29,14 @@ def reservation_list(request):
         if loan:
             issued_reservations.append((reservation, loan.due_date))
         else:
-            active_reservations.append(reservation)
+            active_reservations.append((reservation, None))
 
     sorted_reservations = active_reservations + issued_reservations
 
     return render(request, 'loans/reservation_list.html', {
         'sorted_reservations': sorted_reservations,
     })
+
 
 
 def loan_create(request):
@@ -92,23 +93,31 @@ def book_reserve(request, pk):
 def issue_book(request, pk):
     reservation = get_object_or_404(Reservation, pk=pk)
 
-    if reservation.status.status_name != 'Создана':
-        messages.error(request, 'Невозможно выдать книгу, бронирование не активно.')
+    # Проверяем, что бронирование ещё активно
+    if reservation.status.status_name not in ['Создана', 'Активна']:
+        messages.error(request, 'Эту бронь нельзя выдать, так как она уже закрыта или истекла.')
         return redirect('reservation_list')
 
+    # Создаём запись о выдаче книги
     due_date = timezone.now().date() + timedelta(days=14)
-    loan = Loan.objects.create(
-        copy=reservation.copy,
+    Loan.objects.create(
         reader=reservation.reader,
-        due_date=due_date
+        copy=reservation.copy,
+        loan_date=timezone.now().date(),
+        due_date=due_date,
     )
 
+    # Меняем статус бронирования на "Закрыта"
+    closed_status = ReservationStatuses.objects.get(status_name='Закрыта')
+    reservation.status = closed_status
+    reservation.save()
+
+    # Меняем статус копии на "Выдана"
     issued_status = CopiesStatus.objects.get(status='Выдана')
     reservation.copy.status = issued_status
     reservation.copy.save()
 
-    messages.success(request, f'Книга успешно выдана. Возврат до {due_date}.')
-
+    messages.success(request, 'Книга успешно выдана, бронирование закрыто.')
     return redirect('reservation_list')
 
 

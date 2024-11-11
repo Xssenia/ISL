@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="container">
-    <h2>Список бронирований</h2>
-    <table class="table">
+    <h2 class="mb-4">Список бронирований</h2>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Копия книги</th>
@@ -14,15 +14,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for reservation in sorted_reservations %}
-                {% if reservation.1 %}
+            {% for reservation, due_date in sorted_reservations %}
+                {% if due_date %}
                     <!-- Выданное бронирование -->
-                    <tr>
-                        <td>{{ reservation.0.copy }}</td>
-                        <td>{{ reservation.0.reader }}</td>
-                        <td>{{ reservation.0.reservation_date }}</td>
-                        <td>{{ reservation.0.reservation_end_date }}</td>
-                        <td>Выдано до {{ reservation.1 }}</td>
+                    <tr class="table-warning">
+                        <td>{{ reservation.copy }}</td>
+                        <td>{{ reservation.reader }}</td>
+                        <td>{{ reservation.reservation_date }}</td>
+                        <td>{{ reservation.reservation_end_date }}</td>
+                        <td>Выдано до {{ due_date }}</td>
                     </tr>
                 {% else %}
                     <!-- Активное бронирование -->
@@ -32,16 +32,16 @@
                         <td>{{ reservation.reservation_date }}</td>
                         <td>{{ reservation.reservation_end_date }}</td>
                         <td>
-                            <form action="{% url 'issue_book' reservation.pk %}" method="post">
+                            <form action="{% url 'issue_book' reservation.pk %}" method="post" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-success">Выдать</button>
+                                <button type="submit" class="btn btn-success btn-sm">Выдать</button>
                             </form>
                         </td>
                     </tr>
                 {% endif %}
             {% empty %}
                 <tr>
-                    <td colspan="5">Нет активных бронирований.</td>
+                    <td colspan="5" class="text-center">Нет активных бронирований.</td>
                 </tr>
             {% endfor %}
         </tbody>
