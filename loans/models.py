@@ -1,16 +1,26 @@
+from datetime import date, timedelta
+
 from users.models import User
 from books.models import BookCopy
 from django.db import models
 
 class Loan(models.Model):
+    copy = models.ForeignKey(BookCopy, on_delete=models.CASCADE, related_name='loans')
     reader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='loans')
-    copy = models.ForeignKey(BookCopy, on_delete=models.CASCADE)
     loan_date = models.DateField(auto_now_add=True)
-    due_date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
     return_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.copy} выдан {self.reader}"
+        return f"Заём копии {self.copy.book.title} пользователем {self.reader}"
+
+    def get_status(self):
+        if self.return_date:
+            return "Завершённый"
+        elif date.today() > self.due_date:
+            return "Просроченный"
+        else:
+            return "Активный"
 
 
 class ReservationStatuses(models.Model):

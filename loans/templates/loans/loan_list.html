@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Список выдач</h2>
-<a href="{% url 'loan_create' %}">Добавить выдачу</a>
-<ul>
-    {% for loan in loans %}
-    <li>{{ loan.copy }} - {{ loan.reader }} - {{ loan.loan_date }} до {{ loan.due_date }}</li>
-    {% endfor %}
-</ul>
+<div class="container">
+    <h2>Список выдач</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Копия книги</th>
+                <th>Читатель</th>
+                <th>Дата выдачи</th>
+                <th>Дата возврата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+                <tr class="{% if loan.return_date %}table-success{% endif %}">
+                    <td>{{ loan.copy }}</td>
+                    <td>{{ loan.reader }}</td>
+                    <td>{{ loan.loan_date }}</td>
+                    <td>
+                        {% if loan.return_date %}
+                            {{ loan.return_date }}
+                        {% else %}
+                            <form action="{% url 'close_loan' loan.pk %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Закрыть</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if loan.return_date %}
+                            Возвращено
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">Нет активных выдач.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
