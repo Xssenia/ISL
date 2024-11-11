@@ -22,3 +22,9 @@ class Reservation(models.Model):
     def __str__(self):
         return f"Бронирование {self.copy} для {self.reader}"
 
+class ReservationStatuses(models.Model):
+    status_id = models.AutoField(primary_key=True)
+    status_name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.status_name

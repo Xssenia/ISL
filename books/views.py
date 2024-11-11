@@ -301,3 +301,4 @@ def restore_edition(request, pk):
     log_action(request.user, 'RESTORE', 'Edition', edition.id, f"Издание {edition.edition_name} было восстановлено")
     return redirect('edition_list')
 
+

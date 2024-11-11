@@ -29,3 +29,35 @@ def reservation_create(request):
     else:
         form = ReservationForm()
     return render(request, 'loans/reservation_form.html', {'form': form})
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from books.models import *
+from django.utils import timezone
+
+def book_reserve(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+
+    # Находим копию книги со статусом "Доступна"
+    available_copy = BookCopy.objects.filter(book=book, status=1).first()
+
+    if available_copy:
+        # Обновляем статус копии книги на "Забронирована"
+        available_copy.status = 3  # "Забронирована"
+        available_copy.save()
+
+        # Создаем запись в таблице бронирований
+        reservation_status = ReservationStatuses.objects.get(status_name='Создана')
+        reservation = Reservation.objects.create(
+            reader_id=request.user.id,
+            copy_id=available_copy.pk,
+            status_id=reservation_status.pk,
+            reservation_date=timezone.now(),
+            reservation_end_date=timezone.now() + timezone.timedelta(days=7)
+        )
+
+        messages.success(request, "Бронирование успешно создано.")
+        return redirect('catalog')
+    else:
+        messages.error(request, "Нет доступных копий для бронирования.")
+        return redirect('book_detail', pk=pk)
