@@ -32,9 +32,31 @@ def book_list(request):
         'selected_title': title_filter
     })
 
+from django.shortcuts import render, get_object_or_404
+from loans.models import Reservation
+from datetime import date
+
 def book_detail(request, pk):
     book = get_object_or_404(Book.objects.prefetch_related('authors', 'genres'), pk=pk)
-    return render(request, 'books/book_detail.html', {'book': book})
+
+    user_has_active_reservation = False
+    if request.user.is_authenticated:
+        user_has_active_reservation = Reservation.objects.filter(
+            reader=request.user,
+            copy__book=book,
+            status__status_name='Создана',
+            reservation_end_date__gte=date.today()
+        ).exists()
+
+    return render(
+        request,
+        template_name='books/book_detail.html',
+        context={
+            'book': book,
+            'user_has_active_reservation': user_has_active_reservation
+        }
+    )
+
 
 def book_create(request):
     if request.method == 'POST':

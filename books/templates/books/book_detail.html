@@ -1,19 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ book.title }}</h1>
-<img src="{{ book.cover_image.url }}" alt="Обложка книги" style="width: 200px;">
-<p><strong>Издание:</strong> {{ book.edition.edition_name }}</p>
-<p><strong>Год публикации:</strong> {{ book.publication_year }}</p>
-<p><strong>Авторы:</strong> {{ book.authors.all|join:", " }}</p>
-<p><strong>Жанры:</strong> {{ book.genres.all|join:", " }}</p>
-<p><strong>Описание:</strong> {{ book.description }}</p>
+<div class="container">
+    <h1>{{ book.title }}</h1>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <img src="{{ book.cover_image.url }}" alt="Обложка книги" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <p><strong>Издание:</strong> {{ book.edition.edition_name }}</p>
+            <p><strong>Год публикации:</strong> {{ book.publication_year }}</p>
+            <p><strong>Авторы:</strong> {{ book.authors.all|join:", " }}</p>
+            <p><strong>Жанры:</strong> {{ book.genres.all|join:", " }}</p>
+            <p><strong>Описание:</strong> {{ book.description }}</p>
 
-<!-- Кнопка бронирования -->
-<form action="{% url 'book_reserve' book.pk %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-success">Забронировать</button>
-</form>
+            <div class="mb-3">
+                {% if user.is_authenticated %}
+                    {% if user_has_active_reservation %}
+                        <button class="btn btn-secondary mb-2" disabled>Уже забронировано</button>
+                    {% else %}
+                        <form action="{% url 'book_reserve' book.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success mb-2">Забронировать</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <p class="text-danger">Авторизуйтесь, чтобы забронировать книгу.</p>
+                {% endif %}
+            </div>
 
-<a href="{% url 'catalog' %}" class="btn btn-secondary">Назад к каталогу</a>
+            <a href="{% url 'book_list_reader' %}" class="btn btn-secondary">Назад к каталогу</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
