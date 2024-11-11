@@ -1,0 +1,24 @@
+<!-- templates/books/book_copy_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ form.instance.pk|yesno:"Редактировать копию книги,Добавить копию книги" }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ form.book.label_tag }}<br>
+        {{ form.book }}
+    </div>
+    <div class="mb-3">
+        {{ form.book_number.label_tag }}<br>
+        {{ form.book_number }}
+    </div>
+    <div class="mb-3">
+        {{ form.status.label_tag }}<br>
+        {{ form.status }}
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'book_copy_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

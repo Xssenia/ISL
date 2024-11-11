@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Создать бэкап</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Создать бэкап</button>
+</form>
+{% endblock %}

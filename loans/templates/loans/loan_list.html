@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Список выдач</h2>
+<a href="{% url 'loan_create' %}">Добавить выдачу</a>
+<ul>
+    {% for loan in loans %}
+    <li>{{ loan.copy }} - {{ loan.reader }} - {{ loan.loan_date }} до {{ loan.due_date }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

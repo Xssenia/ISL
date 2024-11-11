@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Список копий</h1>
+    <div>
+        <a href="{% url 'book_copy_create' %}" class="btn btn-success">Добавить копию книги</a>
+        <a href="{% url 'deleted_bookcopies' %}" class="btn btn-warning">Просмотреть удалённые копии книг</a>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Номер копии</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for copy in copies %}
+            <tr>
+                <td>{{ copy.book.title }}</td>
+                <td>{{ copy.book_number }}</td>
+                <td>{{ copy.status }}</td>
+                <td>
+                    <a href="{% url 'book_copy_edit' copy.pk %}" class="btn btn-primary btn-sm">Редактировать</a>
+                    <a href="{% url 'book_copy_delete' copy.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены, что хотите удалить эту копию книги?');">Удалить</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Нет копий книг.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

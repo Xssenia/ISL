@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Удаленные жанры</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название жанра</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for genre in genres %}
+            <tr>
+                <td>{{ genre.genre_name }}</td>
+                <td>
+                    <a href="{% url 'restore_genre' genre.pk %}" class="btn btn-success btn-sm">Восстановить</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="2">Нет удаленных жанров.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'genre_list' %}" class="btn btn-secondary">Назад к списку жанров</a>
+{% endblock %}

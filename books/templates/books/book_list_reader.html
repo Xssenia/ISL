@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Каталог книг</h1>
+
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Поиск по названию" value="{{ query }}">
+        </div>
+        <div class="col-md-3">
+            <select name="author" class="form-control">
+                <option value="">Все авторы</option>
+                {% for author in authors %}
+                    <option value="{{ author.author_name }}" {% if author_filter == author.author_name %}selected{% endif %}>{{ author.author_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="genre" class="form-control">
+                <option value="">Все жанры</option>
+                {% for genre in genres %}
+                    <option value="{{ genre.genre_name }}" {% if genre_filter == genre.genre_name %}selected{% endif %}>{{ genre.genre_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Фильтр</button>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    {% for book in page_obj %}
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card h-100" style="width: 100%; max-width: 150px;"> <!-- Ограничиваем ширину -->
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: cover;"> <!-- Уменьшаем высоту изображения -->
+                {% else %}
+                    <img src="{% static 'default_cover.jpg' %}" class="card-img-top" alt="Обложка отсутствует" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body p-2"> <!-- Уменьшаем внутренние отступы -->
+                    <h6 class="card-title text-center" style="font-size: 0.9rem;">{{ book.title }}</h6> <!-- Уменьшаем размер шрифта -->
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm w-100">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Нет книг, соответствующих вашему запросу.</p>
+    {% endfor %}
+</div>
+
+<!-- Пагинация -->
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}{% if genre_filter %}&genre={{ genre_filter }}{% endif %}">Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}{% if genre_filter %}&genre={{ genre_filter }}{% endif %}">Назад</a>
+        {% endif %}
+
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}{% if genre_filter %}&genre={{ genre_filter }}{% endif %}">Вперед</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}{% if genre_filter %}&genre={{ genre_filter }}{% endif %}">Последняя</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

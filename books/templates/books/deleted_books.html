@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Удаленные книги</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Издание</th>
+            <th>Год публикации</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.edition.edition_name }}</td>
+                <td>{{ book.publication_year }}</td>
+                <td>
+                    <a href="{% url 'restore_book' book.pk %}" class="btn btn-success btn-sm">Восстановить</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Нет удаленных книг.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'book_list' %}" class="btn btn-secondary">Назад к списку книг</a>
+{% endblock %}

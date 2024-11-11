@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ book.title }}</h1>
+
+<p><strong>Издание:</strong> {{ book.edition.edition_name }}</p>
+<p><strong>Год публикации:</strong> {{ book.publication_year }}</p>
+
+<h3>Авторы:</h3>
+<ul>
+    {% for author in book.authors.all %}
+        <li>{{ author.author_name }}</li>
+    {% empty %}
+        <li>Нет информации об авторах</li>
+    {% endfor %}
+</ul>
+
+<h3>Жанры:</h3>
+<ul>
+    {% for genre in book.genres.all %}
+        <li>{{ genre.genre_name }}</li>
+    {% empty %}
+        <li>Нет информации о жанрах</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Описание:</strong> {{ book.description }}</p>
+
+{% if book.cover_image %}
+    <img src="{{ book.cover_image.url }}" alt="{{ book.title }} обложка" style="max-width: 300px;">
+{% endif %}
+{% endblock %}
