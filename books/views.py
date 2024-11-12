@@ -345,3 +345,5 @@ def restore_edition(request, pk):
     return redirect('edition_list')
 
 
+def welcome(request):
+    return render(request, 'users/welcome.html')

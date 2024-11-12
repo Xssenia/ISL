@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1>Добро пожаловать в библиотеку!</h1>
+    <p class="lead">Выберите раздел для продолжения:</p>
+
+    {% if user.is_authenticated %}
+        {% if user.role and user.role.role_name == 'Библиотекарь' %}
+            <a href="{% url 'book_list' %}" class="btn btn-primary btn-lg mt-3">Перейти к управлению книгами</a>
+        {% elif user.role and user.role.role_name == 'Читатель' %}
+            <a href="{% url 'book_list_reader' %}" class="btn btn-success btn-lg mt-3">Перейти к каталогу</a>
+        {% endif %}
+        <a href="{% url 'logout' %}" class="btn btn-secondary btn-lg mt-3">Выйти</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-3">Войти в систему</a>
+    {% endif %}
+</div>
+{% endblock %}
