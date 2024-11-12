@@ -26,7 +26,7 @@ def login_view(request):
             print(f"Отладка: email={email}, пароль проверен: {password}")
             if user is not None:
                 login(request, user)
-                return redirect('book_list')
+                return redirect('welcome')
             else:
                 print("Отладка: Аутентификация не удалась")
                 form.add_error(None, 'Неверный email или пароль')
