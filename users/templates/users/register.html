@@ -1,10 +1,73 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Регистрация</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+            <h2 class="card-title text-center">Регистрация</h2>
+
+            <!-- Вывод ошибок формы -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <strong>{{ field.label }}:</strong> {{ error }}<br>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <!-- Поле Email -->
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    <small class="form-text text-muted">Введите ваш адрес электронной почты.</small>
+                </div>
+
+                <!-- Поле Имя -->
+                <div class="form-group">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                    <small class="form-text text-muted">Введите ваше имя.</small>
+                </div>
+
+                <!-- Поле Фамилия -->
+                <div class="form-group">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                    <small class="form-text text-muted">Введите вашу фамилию.</small>
+                </div>
+
+                <!-- Поле Отчество -->
+                <div class="form-group">
+                    {{ form.patronymic.label_tag }}
+                    {{ form.patronymic }}
+                    <small class="form-text text-muted">Отчество (необязательно).</small>
+                </div>
+
+                <!-- Поле Пароль -->
+                <div class="form-group">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                    <small class="form-text text-muted">Пароль должен содержать не менее 8 символов.</small>
+                </div>
+
+                <!-- Поле Подтверждение пароля -->
+                <div class="form-group">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                    <small class="form-text text-muted">Повторите пароль для подтверждения.</small>
+                </div>
+
+                <!-- Кнопка регистрации -->
+                <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

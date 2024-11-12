@@ -3,18 +3,35 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import *
 from .models import User, Role
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from loans.models import Reservation, Loan
+from users.forms import UserRegistrationForm
+from django.contrib import messages
+
 
 def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Сохраняем пользователя
+            user = form.save()
+
+            # Назначаем пользователю роль "Читатель"
+            reader_role = Role.objects.filter(role_name='Читатель').first()
+            if reader_role:
+                user.role = reader_role
+                user.save()
+
+            # Выводим сообщение об успешной регистрации
+            messages.success(request, 'Регистрация прошла успешно! Теперь вы можете войти в систему.')
             return redirect('login')
+        else:
+            # Если форма невалидна, передаём ошибки в шаблон
+            form.add_error(None, 'Пожалуйста, исправьте ошибки в форме.')
     else:
         form = UserRegistrationForm()
+
     return render(request, 'users/register.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -23,16 +40,17 @@ def login_view(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
-            print(f"Отладка: email={email}, пароль проверен: {password}")
+
             if user is not None:
                 login(request, user)
                 return redirect('welcome')
             else:
-                print("Отладка: Аутентификация не удалась")
-                form.add_error(None, 'Неверный email или пароль')
+                form.add_error(None, 'Неверный email или пароль.')
     else:
         form = LoginForm()
+
     return render(request, 'users/login.html', {'form': form})
+
 
 
 

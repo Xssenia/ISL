@@ -1,10 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Вход</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-</form>
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+            <h2 class="card-title text-center">Вход</h2>
+
+            <!-- Вывод ошибок формы -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors|join:", " }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <!-- Поле Email -->
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    <small class="form-text text-muted">Введите ваш адрес электронной почты.</small>
+                </div>
+
+                <!-- Поле Пароль -->
+                <div class="form-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    <small class="form-text text-muted">Введите ваш пароль.</small>
+                </div>
+
+                <!-- Кнопка входа -->
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
