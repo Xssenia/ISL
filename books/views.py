@@ -40,10 +40,11 @@ def book_detail(request, pk):
     book = get_object_or_404(Book.objects.prefetch_related('authors', 'genres'), pk=pk)
 
     user_has_active_reservation = False
+    is_librarian = False
 
     if request.user.is_authenticated:
-        # Отладочный вывод
-        print("Пользователь аутентифицирован")
+        # Проверяем, является ли пользователь библиотекарем
+        is_librarian = request.user.role.role_name == 'Библиотекарь'
 
         # Проверка активных бронирований
         active_reservation_exists = Reservation.objects.filter(
@@ -55,7 +56,6 @@ def book_detail(request, pk):
 
         if active_reservation_exists:
             user_has_active_reservation = True
-            print("Найдено активное бронирование")
 
         # Проверка завершённых бронирований
         closed_reservation_exists = Reservation.objects.filter(
@@ -66,16 +66,17 @@ def book_detail(request, pk):
 
         if not active_reservation_exists and closed_reservation_exists:
             user_has_active_reservation = False
-            print("Все бронирования завершены")
 
     return render(
         request,
         template_name='books/book_detail.html',
         context={
             'book': book,
-            'user_has_active_reservation': user_has_active_reservation
+            'user_has_active_reservation': user_has_active_reservation,
+            'is_librarian': is_librarian,
         }
     )
+
 
 
 

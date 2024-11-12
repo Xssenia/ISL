@@ -14,24 +14,23 @@
             <p><strong>Жанры:</strong> {{ book.genres.all|join:", " }}</p>
             <p><strong>Описание:</strong> {{ book.description }}</p>
 
-            <div class="mb-3">
-                {% if user.is_authenticated %}
-                    {% if user_has_active_reservation %}
-                        <button class="btn btn-secondary mb-2" style="width: 200px;">Уже забронировано</button>
+            <!-- Проверка, не является ли пользователь библиотекарем -->
+            {% if not is_librarian %}
+                <div class="mb-3">
+                    {% if user.is_authenticated %}
+                        {% if user_has_active_reservation %}
+                            <button class="btn btn-secondary mb-2" style="width: 200px;">Уже забронировано</button>
+                        {% else %}
+                            <form action="{% url 'book_reserve' book.pk %}" method="post" class="mb-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success" style="width: 200px;">Забронировать</button>
+                            </form>
+                        {% endif %}
                     {% else %}
-                        <form action="{% url 'book_reserve' book.pk %}" method="post" class="mb-2">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success" style="width: 200px;">Забронировать</button>
-                        </form>
+                        <p class="text-danger">Авторизуйтесь, чтобы забронировать книгу.</p>
                     {% endif %}
-                {% else %}
-                    <p class="text-danger">Авторизуйтесь, чтобы забронировать книгу.</p>
-                {% endif %}
-            </div>
-
-            <div>
-                <a href="{% url 'book_list_reader' %}" class="btn btn-secondary" style="width: 200px;">Назад к каталогу</a>
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
