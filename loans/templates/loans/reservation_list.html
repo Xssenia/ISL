@@ -16,7 +16,6 @@
         <tbody>
             {% for reservation, due_date in sorted_reservations %}
                 {% if due_date %}
-                    <!-- Выданное бронирование -->
                     <tr class="table-warning">
                         <td>{{ reservation.copy }}</td>
                         <td>{{ reservation.reader }}</td>
@@ -25,7 +24,6 @@
                         <td>Выдано до {{ due_date }}</td>
                     </tr>
                 {% else %}
-                    <!-- Активное бронирование -->
                     <tr>
                         <td>{{ reservation.copy }}</td>
                         <td>{{ reservation.reader }}</td>

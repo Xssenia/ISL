@@ -15,9 +15,6 @@ def loan_list(request):
     loans = Loan.objects.all()
     return render(request, 'loans/loan_list.html', {'loans': loans})
 
-from django.shortcuts import render
-from loans.models import Reservation, Loan
-
 def reservation_list(request):
     reservations = Reservation.objects.all()
 
@@ -59,7 +56,6 @@ def reservation_create(request):
         form = ReservationForm()
     return render(request, 'loans/reservation_form.html', {'form': form})
 
-
 @transaction.atomic
 def book_reserve(request, pk):
     book = get_object_or_404(Book, pk=pk)
@@ -72,7 +68,6 @@ def book_reserve(request, pk):
     created_status = ReservationStatuses.objects.get(status_name='Создана')
     reservation_end_date = date.today() + timedelta(days=7)
 
-    # Создаём бронирование
     Reservation.objects.create(
         reader=request.user,
         copy=available_copy,
@@ -80,7 +75,6 @@ def book_reserve(request, pk):
         status=created_status
     )
 
-    # Обновляем статус копии книги
     reserved_status = CopiesStatus.objects.get(status='Забронирована')
     available_copy.status = reserved_status
     available_copy.save()
@@ -93,12 +87,10 @@ def book_reserve(request, pk):
 def issue_book(request, pk):
     reservation = get_object_or_404(Reservation, pk=pk)
 
-    # Проверяем, что бронирование ещё активно
     if reservation.status.status_name not in ['Создана', 'Активна']:
         messages.error(request, 'Эту бронь нельзя выдать, так как она уже закрыта или истекла.')
         return redirect('reservation_list')
 
-    # Создаём запись о выдаче книги
     due_date = timezone.now().date() + timedelta(days=14)
     Loan.objects.create(
         reader=reservation.reader,
@@ -107,12 +99,10 @@ def issue_book(request, pk):
         due_date=due_date,
     )
 
-    # Меняем статус бронирования на "Закрыта"
     closed_status = ReservationStatuses.objects.get(status_name='Закрыта')
     reservation.status = closed_status
     reservation.save()
 
-    # Меняем статус копии на "Выдана"
     issued_status = CopiesStatus.objects.get(status='Выдана')
     reservation.copy.status = issued_status
     reservation.copy.save()

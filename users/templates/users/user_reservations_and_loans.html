@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Мои бронирования и выдачи</h2>
+
+    <h3>Бронирования</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Копия книги</th>
+                <th>Дата бронирования</th>
+                <th>Дата окончания бронирования</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.copy }}</td>
+                    <td>{{ reservation.reservation_date }}</td>
+                    <td>{{ reservation.reservation_end_date }}</td>
+                    <td>{{ reservation.status.status_name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">У вас нет активных бронирований.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Выдачи</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Копия книги</th>
+                <th>Дата выдачи</th>
+                <th>Дата возврата</th>
+                <th>Дата, до которой нужно вернуть</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+                <tr>
+                    <td>{{ loan.copy }}</td>
+                    <td>{{ loan.loan_date }}</td>
+                    <td>
+                        {% if loan.return_date %}
+                            {{ loan.return_date }}
+                        {% else %}
+                            <span class="text-warning">Не возвращена</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ loan.due_date }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">У вас нет активных выдач.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

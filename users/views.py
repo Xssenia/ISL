@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from .forms import UserRegistrationForm, LoginForm
-from .forms import UserRegistrationForm
+from .forms import *
 from .models import User, Role
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from loans.models import Reservation, Loan
 
 def register_view(request):
     if request.method == 'POST':
@@ -67,4 +68,18 @@ def assign_role(request, user_id, role_id):
     user.save()
     return redirect('user_list')
 
+
+@login_required
+def user_reservations_and_loans(request):
+    # Получаем все бронирования текущего пользователя
+    reservations = Reservation.objects.filter(reader=request.user).order_by('-reservation_date')
+
+    # Получаем все выдачи текущего пользователя
+    loans = Loan.objects.filter(reader=request.user).order_by('-loan_date')
+
+    context = {
+        'reservations': reservations,
+        'loans': loans,
+    }
+    return render(request, 'users/user_reservations_and_loans.html', context)
 
