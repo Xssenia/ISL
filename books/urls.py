@@ -4,7 +4,8 @@ from . import views
 from .views import book_list, book_detail, book_create, book_update, book_delete, author_delete
 
 urlpatterns = [
-    path('', book_list, name='book_list'),
+    path('books/', book_list, name='book_list'),
+    path('catalog/', views.book_list_reader, name='book_list_reader'),
     path('<int:pk>/', book_detail, name='book_detail'),
     path('create/', book_create, name='book_create'),
     path('<int:pk>/update/', book_update, name='book_update'),
@@ -29,7 +30,6 @@ urlpatterns = [
     path('editions/<int:pk>/delete/', views.EditionDeleteView.as_view(), name='edition_delete'),
     path('deleted_editions/', views.DeletedEditionListView.as_view(), name='deleted_editions'),
     path('restore_edition/<int:pk>/', views.restore_edition, name='restore_edition'),
-    path('catalog/', views.book_list_reader, name='book_list_reader'),
     path('<int:pk>/', views.book_detail, name='book_detail'),
     path('copies/', views.book_copy_list, name='book_copy_list'),
     path('copies/create/', views.book_copy_create, name='book_copy_create'),
