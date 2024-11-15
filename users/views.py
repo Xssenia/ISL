@@ -12,20 +12,16 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            # Сохраняем пользователя
             user = form.save()
 
-            # Назначаем пользователю роль "Читатель"
             reader_role = Role.objects.filter(role_name='Читатель').first()
             if reader_role:
                 user.role = reader_role
                 user.save()
 
-            # Выводим сообщение об успешной регистрации
             messages.success(request, 'Регистрация прошла успешно! Теперь вы можете войти в систему.')
             return redirect('login')
         else:
-            # Если форма невалидна, передаём ошибки в шаблон
             form.add_error(None, 'Пожалуйста, исправьте ошибки в форме.')
     else:
         form = UserRegistrationForm()
@@ -89,15 +85,33 @@ def assign_role(request, user_id, role_id):
 
 @login_required
 def user_reservations_and_loans(request):
-    # Получаем все бронирования текущего пользователя
-    reservations = Reservation.objects.filter(reader=request.user).order_by('-reservation_date')
+    active_reservations = Reservation.objects.filter(
+        reader=request.user,
+        status__status_name__in=['Создана', 'Активна']
+    ).order_by('-reservation_date')
 
-    # Получаем все выдачи текущего пользователя
-    loans = Loan.objects.filter(reader=request.user).order_by('-loan_date')
+    closed_reservations = Reservation.objects.filter(
+        reader=request.user,
+        status__status_name__in=['Закрыта', 'Истекла', 'Отменена']
+    ).order_by('-reservation_date')
+
+    active_loans = Loan.objects.filter(
+        reader=request.user,
+        return_date__isnull=True
+    ).order_by('-loan_date')
+
+    closed_loans = Loan.objects.filter(
+        reader=request.user,
+        return_date__isnull=False
+    ).order_by('-loan_date')
 
     context = {
-        'reservations': reservations,
-        'loans': loans,
+        'active_reservations': active_reservations,
+        'closed_reservations': closed_reservations,
+        'active_loans': active_loans,
+        'closed_loans': closed_loans,
     }
     return render(request, 'users/user_reservations_and_loans.html', context)
+
+
 
