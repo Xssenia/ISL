@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load l10n %}
 
 {% block content %}
 <div class="container">
@@ -14,23 +15,23 @@
             </tr>
         </thead>
         <tbody>
-            {% for reservation, due_date in sorted_reservations %}
-                {% if due_date %}
-                    <tr class="table-warning">
-                        <td>{{ reservation.copy }}</td>
+            {% for reservation in sorted_reservations %}
+                {% if reservation.status.status_name == 'Закрыта' %}
+                    <tr class="table-success">
+                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.copy_number }} ({{ reservation.copy.status.status }})</td>
                         <td>{{ reservation.reader }}</td>
-                        <td>{{ reservation.reservation_date }}</td>
-                        <td>{{ reservation.reservation_end_date }}</td>
-                        <td>Выдано до {{ due_date }}</td>
+                        <td>{{ reservation.reservation_date|localize }}</td>
+                        <td>{{ reservation.reservation_end_date|localize }}</td>
+                        <td>Выдано {{ due_date }}</td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td>{{ reservation.copy }}</td>
+                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.copy_number }} ({{ reservation.copy.status.status }})</td>
                         <td>{{ reservation.reader }}</td>
-                        <td>{{ reservation.reservation_date }}</td>
-                        <td>{{ reservation.reservation_end_date }}</td>
+                        <td>{{ reservation.reservation_date|localize }}</td>
+                        <td>{{ reservation.reservation_end_date|localize }}</td>
                         <td>
-                            <form action="{% url 'issue_book' reservation.pk %}" method="post" class="d-inline">
+                            <form action="{% url 'issue_book' reservation.pk %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-success btn-sm">Выдать</button>
                             </form>

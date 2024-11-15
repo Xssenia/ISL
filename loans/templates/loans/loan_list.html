@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load l10n %}
 
 {% block content %}
 <div class="container">
-    <h2>Список выдач</h2>
-    <table class="table">
+    <h2 class="mb-4">Список выдач</h2>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Копия книги</th>
@@ -14,32 +15,36 @@
             </tr>
         </thead>
         <tbody>
-            {% for loan in loans %}
-                <tr class="{% if loan.return_date %}table-success{% endif %}">
-                    <td>{{ loan.copy }}</td>
-                    <td>{{ loan.reader }}</td>
-                    <td>{{ loan.loan_date }}</td>
-                    <td>
-                        {% if loan.return_date %}
-                            {{ loan.return_date }}
-                        {% else %}
-                            <form action="{% url 'close_loan' loan.pk %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Закрыть</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if loan.return_date %}
-                            Возвращено
-                        {% endif %}
-                    </td>
-                </tr>
-            {% empty %}
+            {% for loan in active_loans %}
                 <tr>
-                    <td colspan="5">Нет активных выдач.</td>
+                    <td>{{ loan.copy.book.title }} — Копия {{ loan.copy.copy_number }} ({{ loan.copy.status.status }})</td>
+                    <td>{{ loan.reader }}</td>
+                    <td>{{ loan.loan_date|localize }}</td>
+                    <td>
+                        <form action="{% url 'close_loan' loan.pk %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Закрыть</button>
+                        </form>
+                    </td>
+                    <td>Активна</td>
                 </tr>
             {% endfor %}
+
+            {% for loan in closed_loans %}
+                <tr class="table-success">
+                    <td>{{ loan.copy.book.title }} — Копия {{ loan.copy.copy_number }} ({{ loan.copy.status.status }})</td>
+                    <td>{{ loan.reader }}</td>
+                    <td>{{ loan.loan_date|localize }}</td>
+                    <td>{{ loan.return_date|localize }}</td>
+                    <td>Возвращено</td>
+                </tr>
+            {% endfor %}
+
+            {% if active_loans|length == 0 and closed_loans|length == 0 %}
+                <tr>
+                    <td colspan="5" class="text-center">Нет активных выдач.</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>

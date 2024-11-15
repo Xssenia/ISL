@@ -13,28 +13,30 @@ from django.utils import timezone
 
 def loan_list(request):
     loans = Loan.objects.all()
-    return render(request, 'loans/loan_list.html', {'loans': loans})
+
+    active_loans = loans.filter(return_date__isnull=True).order_by('-loan_date')
+    closed_loans = loans.filter(return_date__isnull=False).order_by('-return_date')
+
+    return render(request, 'loans/loan_list.html', {
+        'active_loans': active_loans,
+        'closed_loans': closed_loans,
+    })
+
 
 def reservation_list(request):
-    reservations = Reservation.objects.all()
+    active_reservations = Reservation.objects.filter(
+        status__status_name__in=['Создана', 'Активна']
+    ).order_by('-reservation_date')
 
-    active_reservations = []
-    issued_reservations = []
+    issued_reservations = Reservation.objects.filter(
+        status__status_name='Закрыта'
+    ).order_by('-reservation_date')
 
-    for reservation in reservations:
-        loan = Loan.objects.filter(copy=reservation.copy).first()
-        if loan:
-            issued_reservations.append((reservation, loan.due_date))
-        else:
-            active_reservations.append((reservation, None))
-
-    sorted_reservations = active_reservations + issued_reservations
+    sorted_reservations = list(active_reservations) + list(issued_reservations)
 
     return render(request, 'loans/reservation_list.html', {
         'sorted_reservations': sorted_reservations,
     })
-
-
 
 def loan_create(request):
     if request.method == 'POST':
