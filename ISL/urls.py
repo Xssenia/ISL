@@ -9,7 +9,6 @@ urlpatterns = [
     path('books/', include('books.urls')),
     path('loans/', include('loans.urls')),
     path('admin_panel/', include('admin_panel.urls')),
-    path('backups/', include('backups.urls')),
     path('', include('books.urls')),
 ]
 
