@@ -8,3 +8,4 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('my_reservations/', views.user_reservations_and_loans, name='user_reservations_and_loans'),
 ]
+

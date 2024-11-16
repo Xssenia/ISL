@@ -11,14 +11,3 @@ class Log(models.Model):
 
     def __str__(self):
         return f"{self.type} - {self.entity}"
-
-# logs/models.py
-def log_action(user, action_type, entity, entity_id, details=None):
-    from .models import Log
-    Log.objects.create(
-        user=user,
-        type=action_type,
-        entity=entity,
-        entityID=entity_id,
-        action_details=details
-    )

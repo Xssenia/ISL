@@ -4,7 +4,7 @@ from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from logs.models import log_action
+from admin_panel.views import log_action
 from .models import Loan, Reservation, ReservationStatuses
 from .forms import LoanForm, ReservationForm
 from django.contrib import messages

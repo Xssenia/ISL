@@ -8,7 +8,7 @@ from .models import *
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from django.core.paginator import Paginator
-from logs.models import log_action
+from admin_panel.views import log_action
 
 def book_list(request):
     genre_filter = request.GET.get('genre')
