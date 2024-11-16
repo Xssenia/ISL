@@ -1,9 +1,15 @@
-from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from users.forms import UserForm
-from users.models import User
+import os
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
+from django.utils import timezone
 from .models import Log
-from users.views import User
+from users.models import User
 
 
 def log_action(user, action_type, entity, entity_id, details=None):
@@ -37,6 +43,96 @@ def admin_view_logs(request):
         'action_type': action_type,
         'user_id': user_id,
     })
+
+BACKUP_DIR = os.path.join("admin_panel", "backups")
+
+@login_required
+def backup_db(request):
+    if not request.user.role or request.user.role.role_name != 'Администратор':
+        messages.error(request, 'У вас нет прав для выполнения этой операции.')
+        return render(request, 'admin_db/backup_restore.html')
+
+    if request.method == 'POST':
+        try:
+            if not os.path.exists(BACKUP_DIR):
+                os.makedirs(BACKUP_DIR)
+
+            timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
+            backup_file = os.path.join(BACKUP_DIR, f"backup_{timestamp}.json")
+
+            # Создание резервной копии через команду dumpdata
+            os.system(f"python manage.py dumpdata > {backup_file}")
+
+            # Логируем действие
+            Log.objects.create(
+                user=request.user,
+                type="SAVE_DB",
+                entity="Database",
+                entityID=0,
+                action_details=f"База данных сохранена в файл: {backup_file}"
+            )
+
+            messages.success(request, f'База данных успешно сохранена в файл: {backup_file}')
+        except Exception as e:
+            messages.error(request, f'Ошибка при сохранении базы данных: {str(e)}')
+
+    # При GET-запросе просто отображаем страницу
+    return render(request, 'admin_db/backup_restore.html')
+
+@login_required
+def restore_db(request):
+    if not request.user.role or request.user.role.role_name != 'Администратор':
+        messages.error(request, 'У вас нет прав для выполнения этой операции.')
+        return render(request, 'admin_db/backup_restore.html')
+
+    if request.method == 'POST':
+        backup_file = request.FILES.get('backup_file')
+        if not backup_file:
+            messages.error(request, 'Файл резервной копии не был загружен.')
+            return render(request, 'admin_db/backup_restore.html')
+
+        try:
+            # Сохранение загруженного файла
+            backup_path = default_storage.save(f"admin_panel/backups/{backup_file.name}", backup_file)
+
+            # Восстановление базы данных через loaddata
+            os.system(f"python manage.py loaddata {backup_path}")
+
+            # Логируем действие
+            Log.objects.create(
+                user=request.user,
+                type="RESTORE_DB",
+                entity="Database",
+                entityID=0,
+                action_details=f"База данных восстановлена из файла: {backup_file.name}"
+            )
+
+            messages.success(request, f'База данных успешно восстановлена из файла: {backup_file.name}.')
+        except Exception as e:
+            messages.error(request, f'Ошибка при восстановлении базы данных: {str(e)}')
+
+    return render(request, 'admin_db/backup_restore.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @login_required

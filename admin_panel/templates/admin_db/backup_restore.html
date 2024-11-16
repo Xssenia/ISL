@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Управление бэкапами</h2>
+
+    <!-- Создание резервной копии -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Создать резервную копию</h4>
+            <form action="{% url 'backup_db' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Создать резервную копию</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Восстановление из резервной копии -->
+    <div class="card">
+        <div class="card-body">
+            <h4>Восстановить базу данных</h4>
+            <form action="{% url 'restore_db' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="backup_file">Выберите файл резервной копии (.json):</label>
+                    <input type="file" id="backup_file" name="backup_file" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Восстановить</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
