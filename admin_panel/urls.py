@@ -1,6 +1,7 @@
 from django.urls import path
-from admin_panel.views import log_list
+from admin_panel.views import admin_view_logs
 
 urlpatterns = [
-    path('', log_list, name='log_list'),
+    path('logs/', admin_view_logs, name='admin_view_logs'),
+
 ]

@@ -87,3 +87,42 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
+class UserForm(forms.ModelForm):
+    password = forms.CharField(
+        label='Пароль',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        required=False,
+        help_text='Оставьте поле пустым, если не хотите менять пароль.'
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'patronymic', 'role', 'is_active', 'is_staff']
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'patronymic': forms.TextInput(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        labels = {
+            'email': 'Электронная почта',
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'patronymic': 'Отчество',
+            'role': 'Роль',
+            'is_active': 'Активен',
+            'is_staff': 'Персонал',
+        }
+
+    def save(self, commit=True):
+        user = super(UserForm, self).save(commit=False)
+        password = self.cleaned_data.get('password')
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+        return user
+
