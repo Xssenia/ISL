@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'books',
     'loans',
     'admin_panel',
-    'backups',
 ]
 
 
