@@ -4,6 +4,7 @@
 <div class="container">
     <h2 class="mb-4">Логи системы</h2>
 
+    <!-- Форма фильтрации -->
     <form method="get" class="form-inline mb-4">
         <div class="form-group mr-2">
             <label for="type" class="mr-2">Тип действия:</label>
@@ -12,8 +13,10 @@
                 <option value="CREATE" {% if action_type == 'CREATE' %}selected{% endif %}>Создание</option>
                 <option value="EDIT" {% if action_type == 'EDIT' %}selected{% endif %}>Редактирование</option>
                 <option value="DELETE" {% if action_type == 'DELETE' %}selected{% endif %}>Удаление</option>
+                <option value="RESTORE" {% if action_type == 'RESTORE' %}selected{% endif %}>Восстановление</option>
                 <option value="SAVE_DB" {% if action_type == 'SAVE_DB' %}selected{% endif %}>Сохранение БД</option>
                 <option value="RESTORE_DB" {% if action_type == 'RESTORE_DB' %}selected{% endif %}>Восстановление БД</option>
+                <option value="VIEW" {% if action_type == 'VIEW' %}selected{% endif %}>Просмотр</option>
             </select>
         </div>
 
@@ -32,6 +35,7 @@
         <button type="submit" class="btn btn-primary">Применить</button>
     </form>
 
+    <!-- Таблица логов -->
     <table class="table table-striped">
         <thead>
             <tr>
@@ -52,8 +56,10 @@
                         {% if log.type == 'CREATE' %}Создание{% endif %}
                         {% if log.type == 'EDIT' %}Редактирование{% endif %}
                         {% if log.type == 'DELETE' %}Удаление{% endif %}
+                        {% if log.type == 'RESTORE' %}Восстановление{% endif %}
                         {% if log.type == 'SAVE_DB' %}Сохранение БД{% endif %}
                         {% if log.type == 'RESTORE_DB' %}Восстановление БД{% endif %}
+                        {% if log.type == 'VIEW' %}Просмотр{% endif %}
                     </td>
                     <td>{{ log.entity }}</td>
                     <td>{{ log.entityID }}</td>
