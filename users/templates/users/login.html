@@ -6,7 +6,6 @@
         <div class="card-body">
             <h2 class="card-title text-center">Вход</h2>
 
-            <!-- Вывод ошибок формы -->
             {% if form.non_field_errors %}
                 <div class="alert alert-danger">
                     {{ form.non_field_errors|join:", " }}
@@ -15,21 +14,18 @@
 
             <form method="post">
                 {% csrf_token %}
-                <!-- Поле Email -->
                 <div class="form-group">
                     {{ form.email.label_tag }}
                     {{ form.email }}
                     <small class="form-text text-muted">Введите ваш адрес электронной почты.</small>
                 </div>
 
-                <!-- Поле Пароль -->
                 <div class="form-group">
                     {{ form.password.label_tag }}
                     {{ form.password }}
                     <small class="form-text text-muted">Введите ваш пароль.</small>
                 </div>
 
-                <!-- Кнопка входа -->
                 <button type="submit" class="btn btn-primary btn-block">Войти</button>
             </form>
         </div>
