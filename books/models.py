@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Edition(models.Model):
     edition_name = models.CharField(max_length=255)
     deleted_flag = models.BooleanField(default=False)
@@ -15,12 +16,14 @@ class Author(models.Model):
     def __str__(self):
         return self.author_name
 
+
 class Genre(models.Model):
     genre_name = models.CharField(max_length=255)
     deleted_flag = models.BooleanField(default=False)
 
     def __str__(self):
         return self.genre_name
+
 
 class Book(models.Model):
     edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
@@ -35,11 +38,13 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+
 class CopiesStatus(models.Model):
     status = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.status
+
 
 class BookCopy(models.Model):
     book = models.ForeignKey('Book', on_delete=models.CASCADE)
@@ -50,9 +55,11 @@ class BookCopy(models.Model):
     def __str__(self):
         return f"{self.book.title} - Copy {self.book_number} ({self.status})"
 
+
 class BooksAuthors(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
 
 class BooksGenres(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

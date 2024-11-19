@@ -1,14 +1,13 @@
 from datetime import date
-
-from django.shortcuts import render, redirect, get_object_or_404
-
-from loans.models import Reservation
-from .forms import *
-from .models import *
-from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from django.core.paginator import Paginator
 from admin_panel.views import log_action
+from django.shortcuts import render, redirect, get_object_or_404
+from loans.models import Reservation
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
+from .forms import *
+from .models import *
+
 
 def book_list(request):
     genre_filter = request.GET.get('genre')
@@ -36,6 +35,7 @@ def book_list(request):
         'selected_title': title_filter
     })
 
+
 def book_detail(request, pk):
     book = get_object_or_404(Book.objects.prefetch_related('authors', 'genres'), pk=pk)
 
@@ -43,10 +43,8 @@ def book_detail(request, pk):
     is_librarian = False
 
     if request.user.is_authenticated:
-        # Проверяем, является ли пользователь библиотекарем
         is_librarian = request.user.role.role_name == 'Библиотекарь'
 
-        # Проверка активных бронирований
         active_reservation_exists = Reservation.objects.filter(
             reader=request.user,
             copy__book=book,
@@ -57,7 +55,6 @@ def book_detail(request, pk):
         if active_reservation_exists:
             user_has_active_reservation = True
 
-        # Проверка завершённых бронирований
         closed_reservation_exists = Reservation.objects.filter(
             reader=request.user,
             copy__book=book,
@@ -76,8 +73,6 @@ def book_detail(request, pk):
             'is_librarian': is_librarian,
         }
     )
-
-
 
 
 def book_create(request):
@@ -112,11 +107,13 @@ def book_update(request, pk):
         form = BookForm(instance=book)
     return render(request, 'books/book_form.html', {'form': form})
 
+
 def book_delete(request, pk):
     book = get_object_or_404(Book, pk=pk)
     book.deleted_flag = True
     book.save()
     return redirect('book_list')
+
 
 class GenreListView(ListView):
     model = Genre
@@ -125,6 +122,7 @@ class GenreListView(ListView):
 
     def get_queryset(self):
         return Genre.objects.filter(deleted_flag=False)
+
 
 class GenreCreateView(CreateView):
     model = Genre
@@ -137,6 +135,7 @@ class GenreCreateView(CreateView):
         log_action(self.request.user, 'CREATE', 'Genre', self.object.id, f"Создан жанр {self.object.genre_name}")
         return response
 
+
 class GenreUpdateView(UpdateView):
     model = Genre
     fields = ['genre_name']
@@ -148,6 +147,7 @@ class GenreUpdateView(UpdateView):
         log_action(self.request.user, 'UPDATE', 'Genre', self.object.id, f"Обновлен жанр {self.object.genre_name}")
         return response
 
+
 class AuthorListView(ListView):
     model = Author
     template_name = 'authors/author_list.html'
@@ -156,17 +156,20 @@ class AuthorListView(ListView):
     def get_queryset(self):
         return Author.objects.filter(deleted_flag=False)
 
+
 class AuthorCreateView(CreateView):
     model = Author
     fields = ['author_name']
     template_name = 'authors/author_form.html'
     success_url = reverse_lazy('author_list')
 
+
 class AuthorUpdateView(UpdateView):
     model = Author
     fields = ['author_name']
     template_name = 'authors/author_form.html'
     success_url = reverse_lazy('author_list')
+
 
 class EditionListView(ListView):
     model = Edition
@@ -183,11 +186,13 @@ class EditionCreateView(CreateView):
     template_name = 'editions/edition_form.html'
     success_url = reverse_lazy('edition_list')
 
+
 class EditionUpdateView(UpdateView):
     model = Edition
     fields = ['edition_name']
     template_name = 'editions/edition_form.html'
     success_url = reverse_lazy('edition_list')
+
 
 class GenreDeleteView(View):
     def get(self, request, pk):
@@ -195,6 +200,7 @@ class GenreDeleteView(View):
         genre.deleted_flag = True
         genre.save()
         return redirect(reverse_lazy('genre_list'))
+
 
 def author_delete(request, pk):
     author = get_object_or_404(Author, pk=pk)
@@ -212,6 +218,7 @@ class EditionDeleteView(View):
         log_action(request.user, 'DELETE', 'Edition', edition.id, f"Издание {edition.edition_name} было удалено")
         return redirect(reverse_lazy('edition_list'))
 
+
 class DeletedEditionListView(ListView):
     model = Edition
     template_name = 'editions/deleted_editions.html'
@@ -219,6 +226,7 @@ class DeletedEditionListView(ListView):
 
     def get_queryset(self):
         return Edition.objects.filter(deleted_flag=True)
+
 
 def book_list_reader(request):
     query = request.GET.get('q', '')
@@ -252,9 +260,11 @@ def book_list_reader(request):
         'genres': genres,
     })
 
+
 def book_copy_list(request):
     copies = BookCopy.objects.filter(deleted_flag=False)
     return render(request, 'book_copies/book_copy_list.html', {'copies': copies})
+
 
 class BookCopyListView(ListView):
     model = BookCopy
@@ -263,6 +273,7 @@ class BookCopyListView(ListView):
 
     def get_queryset(self):
         return BookCopy.objects.filter(deleted_flag=False)
+
 
 def book_copy_create(request):
     if request.method == 'POST':
@@ -273,6 +284,7 @@ def book_copy_create(request):
     else:
         form = BookCopyForm()
     return render(request, 'book_copies/book_copy_form.html', {'form': form})
+
 
 def book_copy_edit(request, pk):
     copy = get_object_or_404(BookCopy, pk=pk)
@@ -285,12 +297,14 @@ def book_copy_edit(request, pk):
         form = BookCopyForm(instance=copy)
     return render(request, 'book_copies/book_copy_form.html', {'form': form})
 
+
 def book_copy_delete(request, pk):
     book_copy = get_object_or_404(BookCopy, pk=pk)
     book_copy.deleted_flag = True
     book_copy.save()
     log_action(request.user, 'DELETE', 'BookCopy', book_copy.id, f"Копия книги {book_copy.book.title} была удалена")
     return redirect('book_copy_list')
+
 
 class DeletedBookCopyListView(ListView):
     model = BookCopy
@@ -300,6 +314,7 @@ class DeletedBookCopyListView(ListView):
     def get_queryset(self):
         return BookCopy.objects.filter(deleted_flag=True)
 
+
 def book_copy_restore(request, pk):
     book_copy = get_object_or_404(BookCopy, pk=pk, deleted_flag=True)
     book_copy.deleted_flag = False
@@ -307,9 +322,11 @@ def book_copy_restore(request, pk):
     log_action(request.user, 'RESTORE', 'BookCopy', book_copy.id, f"Копия книги {book_copy.book.title} была восстановлена")
     return redirect('book_copy_list')
 
+
 def deleted_books(request):
     books = Book.objects.filter(deleted_flag=True)
     return render(request, 'books/deleted_books.html', {'books': books})
+
 
 def restore_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
@@ -317,9 +334,11 @@ def restore_book(request, pk):
     book.save()
     return redirect('book_list')
 
+
 def deleted_authors(request):
     authors = Author.objects.filter(deleted_flag=True)
     return render(request, 'authors/deleted_authors.html', {'authors': authors})
+
 
 def restore_author(request, pk):
     author = get_object_or_404(Author, pk=pk)
@@ -327,9 +346,11 @@ def restore_author(request, pk):
     author.save()
     return redirect('author_list')
 
+
 def deleted_genres(request):
     genres = Genre.objects.filter(deleted_flag=True)
     return render(request, 'genres/deleted_genres.html', {'genres': genres})
+
 
 def restore_genre(request, pk):
     genre = get_object_or_404(Genre, pk=pk)
@@ -337,6 +358,7 @@ def restore_genre(request, pk):
     genre.save()
     log_action(request.user, 'RESTORE', 'Genre', genre.id, f"Жанр {genre.genre_name} был восстановлен")
     return redirect('genre_list')
+
 
 def restore_edition(request, pk):
     edition = get_object_or_404(Edition, pk=pk, deleted_flag=True)

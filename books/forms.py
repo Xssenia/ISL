@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 
+
 class BookForm(forms.ModelForm):
     authors = forms.ModelMultipleChoiceField(
         queryset=Author.objects.all(),
@@ -24,15 +25,18 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = ['title', 'edition', 'authors', 'genres', 'publication_year', 'cover_image', 'description']
 
+
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = ['author_name']
 
+
 class GenreForm(forms.ModelForm):
     class Meta:
         model = Genre
         fields = ['genre_name']
+
 
 class BookCopyForm(forms.ModelForm):
     class Meta:
