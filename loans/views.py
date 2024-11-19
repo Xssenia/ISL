@@ -1,15 +1,12 @@
 from datetime import date, timedelta
-
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-
-from admin_panel.views import log_action
 from .models import Loan, Reservation, ReservationStatuses
 from .forms import LoanForm, ReservationForm
 from django.contrib import messages
 from books.models import *
 from django.utils import timezone
+
 
 def loan_list(request):
     loans = Loan.objects.all()
@@ -38,6 +35,7 @@ def reservation_list(request):
         'sorted_reservations': sorted_reservations,
     })
 
+
 def loan_create(request):
     if request.method == 'POST':
         form = LoanForm(request.POST)
@@ -48,15 +46,6 @@ def loan_create(request):
         form = LoanForm()
     return render(request, 'loans/loan_form.html', {'form': form})
 
-def reservation_create(request):
-    if request.method == 'POST':
-        form = ReservationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('reservation_list')
-    else:
-        form = ReservationForm()
-    return render(request, 'loans/reservation_form.html', {'form': form})
 
 @transaction.atomic
 def book_reserve(request, pk):

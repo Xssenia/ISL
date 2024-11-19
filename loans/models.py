@@ -1,8 +1,8 @@
 from datetime import date, timedelta
-
 from users.models import User
 from books.models import BookCopy
 from django.db import models
+
 
 class Loan(models.Model):
     copy = models.ForeignKey(BookCopy, on_delete=models.CASCADE, related_name='loans')
