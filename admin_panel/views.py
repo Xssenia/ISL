@@ -1,15 +1,13 @@
-from django.http import JsonResponse, HttpResponse
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.files.storage import default_storage
 from django.utils import timezone
-from django.conf import settings
-import os
-
 from .forms import UserEditForm, AdminUserCreationForm
 from .models import Log
 from users.models import User, Role
+
 
 BACKUP_DIR = os.path.join("admin_panel", "backups")
 
@@ -21,6 +19,7 @@ def log_action(user, action_type, entity, entity_id, details=None):
         entityID=entity_id,
         action_details=details
     )
+
 
 @login_required
 def admin_view_logs(request):
@@ -46,6 +45,7 @@ def admin_view_logs(request):
         'user_id': user_id,
     })
 
+
 @login_required
 def backup_db(request):
     if not request.user.role or request.user.role.role_name != 'Администратор':
@@ -68,6 +68,7 @@ def backup_db(request):
 
     return render(request, 'admin_db/backup_restore.html')
 
+
 @login_required
 def restore_db(request):
     if not request.user.role or request.user.role.role_name != 'Администратор':
@@ -89,6 +90,7 @@ def restore_db(request):
             messages.error(request, f'Ошибка при восстановлении базы данных: {str(e)}')
 
     return render(request, 'admin_db/backup_restore.html')
+
 
 @login_required
 def admin_user_list(request):
@@ -114,6 +116,7 @@ def admin_user_list(request):
         'search_query': search_query,
     })
 
+
 @login_required
 def admin_user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -123,6 +126,7 @@ def admin_user_delete(request, pk):
     messages.success(request, 'Пользователь успешно удален.')
     return redirect('admin_user_list')
 
+
 @login_required
 def admin_user_restore(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -131,6 +135,7 @@ def admin_user_restore(request, pk):
     log_action(request.user, 'RESTORE', 'User', pk, f'Пользователь {user.email} восстановлен')
     messages.success(request, 'Пользователь успешно восстановлен.')
     return redirect('admin_user_list')
+
 
 @login_required
 def admin_user_edit(request, pk):
@@ -146,6 +151,7 @@ def admin_user_edit(request, pk):
         form = UserEditForm(instance=user)
 
     return render(request, 'admin_db/user_edit.html', {'form': form, 'user': user})
+
 
 @login_required
 def admin_user_create(request):

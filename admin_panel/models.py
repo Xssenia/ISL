@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)

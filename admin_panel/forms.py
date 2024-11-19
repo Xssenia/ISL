@@ -1,5 +1,4 @@
 from django import forms
-from users.models import Role
 from .models import User
 
 
@@ -10,14 +9,13 @@ class UserEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Устанавливаем класс Bootstrap для полей
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
-        # Поле email не должно быть изменяемым
         self.fields['first_name'].label = 'Имя'
         self.fields['last_name'].label = 'Фамилия'
         self.fields['patronymic'].label = 'Отчество'
         self.fields['role'].label = 'Роль'
+
 
 class AdminUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(
