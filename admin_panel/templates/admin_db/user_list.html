@@ -4,12 +4,9 @@
 <div class="container">
     <h2 class="mb-4">Управление пользователями</h2>
 
-    <!-- Верхняя панель с кнопкой и фильтрацией -->
     <div class="d-flex justify-content-between mb-4">
-        <!-- Кнопка создания пользователя -->
         <a href="{% url 'admin_user_create' %}" class="btn btn-success">Создать пользователя</a>
 
-        <!-- Форма поиска и фильтрации -->
         <form method="get" class="form-inline">
             <div class="form-group mr-2">
                 <input type="text" name="search" placeholder="Поиск по email" value="{{ email_query }}" class="form-control">
@@ -26,7 +23,6 @@
         </form>
     </div>
 
-    <!-- Таблица пользователей -->
     <table class="table table-striped">
         <thead>
             <tr>

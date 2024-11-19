@@ -6,42 +6,36 @@
     <form method="post">
         {% csrf_token %}
 
-        <!-- Поле Email (нельзя изменять) -->
         <div class="form-group">
             <label>Email:</label>
             <input type="text" class="form-control" value="{{ user.email }}" readonly>
             <small class="form-text text-muted">Электронная почта пользователя (нельзя изменить).</small>
         </div>
 
-        <!-- Поле Имя -->
         <div class="form-group">
             <label>Имя:</label>
             {{ form.first_name }}
             <small class="form-text text-muted">Введите имя пользователя.</small>
         </div>
 
-        <!-- Поле Фамилия -->
         <div class="form-group">
             <label>Фамилия:</label>
             {{ form.last_name }}
             <small class="form-text text-muted">Введите фамилию пользователя.</small>
         </div>
 
-        <!-- Поле Отчество -->
         <div class="form-group">
             <label>Отчество:</label>
             {{ form.patronymic }}
             <small class="form-text text-muted">Введите отчество пользователя (необязательно).</small>
         </div>
 
-        <!-- Поле Роль -->
         <div class="form-group">
             <label>Роль:</label>
             {{ form.role }}
             <small class="form-text text-muted">Выберите роль пользователя.</small>
         </div>
 
-        <!-- Кнопки управления -->
         <button type="submit" class="btn btn-primary">Сохранить изменения</button>
         <a href="{% url 'admin_user_list' %}" class="btn btn-secondary">Отмена</a>
     </form>
