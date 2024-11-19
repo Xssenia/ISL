@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -138,11 +139,9 @@ AUTHENTICATION_BACKENDS = [
     'users.authentication.EmailBackend',  # Пользовательский бэкенд для аутентификации по email
     'django.contrib.auth.backends.ModelBackend',
 ]
-import os
 
-# settings.py
-MEDIA_URL = '/book_covers/'  # Это URL, который будет использоваться для доступа к медиафайлам
-MEDIA_ROOT = r'C:\Users\bettakey\Desktop\MPT\5\COWRK1\library_project\ISL\book_covers'  # Полный путь к папке book_covers
+MEDIA_URL = '/book_covers/'
+MEDIA_ROOT = r'C:\Users\bettakey\Desktop\MPT\5\COWRK1\library_project\ISL\book_covers'
 
 
 

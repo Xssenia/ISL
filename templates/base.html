@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- Навбар -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Библиотека</a>
@@ -20,7 +19,6 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
                         {% if user.role and user.role.role_name == 'Администратор' %}
-                            <!-- Навбар для администратора -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'admin_view_logs' %}">Логи</a>
                             </li>
@@ -31,7 +29,6 @@
                                 <a class="nav-link" href="{% url 'admin_user_list' %}">Пользователи</a>
                             </li>
                         {% elif user.role and user.role.role_name == 'Библиотекарь' %}
-                            <!-- Навбар для библиотекаря -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'book_list' %}">Управление книгами</a>
                             </li>
@@ -54,7 +51,6 @@
                                 <a class="nav-link" href="{% url 'loan_list' %}">Выдачи</a>
                             </li>
                         {% elif user.role and user.role.role_name == 'Читатель' %}
-                            <!-- Навбар для читателя -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'book_list_reader' %}">Каталог</a>
                             </li>
@@ -78,7 +74,6 @@
         </div>
     </nav>
 
-    <!-- Сообщения -->
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}
@@ -89,13 +84,11 @@
         </div>
     {% endif %}
 
-    <!-- Основной контент страницы -->
     <div class="container">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
