@@ -14,7 +14,6 @@
             <p><strong>Жанры:</strong> {{ book.genres.all|join:", " }}</p>
             <p><strong>Описание:</strong> {{ book.description }}</p>
 
-            <!-- Проверка, не является ли пользователь библиотекарем -->
             {% if not is_librarian %}
                 <div class="mb-3">
                     {% if user.is_authenticated %}
