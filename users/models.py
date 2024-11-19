@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
 class Role(models.Model):
     role_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.role_name
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -22,6 +24,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
 
         return self.create_user(email, password, **extra_fields)
+
 
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
@@ -50,4 +53,3 @@ class User(AbstractBaseUser):
     @property
     def is_superuser(self):
         return self.is_staff
-

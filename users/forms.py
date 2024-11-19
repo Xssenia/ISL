@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-
 from .models import User, Role
-from django.contrib.auth.hashers import make_password
+
 
 class UserRegistrationForm(forms.ModelForm):
     email = forms.EmailField(
@@ -68,7 +67,6 @@ class UserRegistrationForm(forms.ModelForm):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password1'])
 
-        # Назначаем роль "Читатель" по умолчанию
         reader_role = Role.objects.get(role_name='Читатель')
         user.role = reader_role
 
@@ -86,6 +84,7 @@ class LoginForm(forms.Form):
         label='Пароль',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
+
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(
@@ -125,4 +124,3 @@ class UserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-

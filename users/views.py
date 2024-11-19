@@ -48,15 +48,15 @@ def login_view(request):
     return render(request, 'users/login.html', {'form': form})
 
 
-
-
 def logout_view(request):
     logout(request)
     return redirect('login')
 
+
 def user_list(request):
     users = User.objects.all()
     return render(request, 'users/user_list.html', {'users': users})
+
 
 def user_update(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -69,11 +69,13 @@ def user_update(request, pk):
         form = UserRegistrationForm(instance=user)
     return render(request, 'users/user_form.html', {'form': form})
 
+
 def user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
     user.deleted_flag = True
     user.save()
     return redirect('user_list')
+
 
 def assign_role(request, user_id, role_id):
     user = get_object_or_404(User, pk=user_id)
@@ -112,6 +114,3 @@ def user_reservations_and_loans(request):
         'closed_loans': closed_loans,
     }
     return render(request, 'users/user_reservations_and_loans.html', context)
-
-
-
