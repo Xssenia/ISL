@@ -33,16 +33,16 @@
 
 <div class="row">
     {% for book in page_obj %}
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-md-2 col-sm-4 mb-3">
             <div class="card h-100" style="width: 100%; max-width: 150px;">
                 {% if book.cover_image %}
-                    <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: cover;">
+                     <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: cover;">
                 {% else %}
                     <img src="{% static 'default_cover.jpg' %}" class="card-img-top" alt="Обложка отсутствует" style="height: 200px; object-fit: cover;">
                 {% endif %}
-                <div class="card-body p-2">
-                    <h6 class="card-title text-center" style="font-size: 0.9rem;">{{ book.title }}</h6>
-                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm w-100">Подробнее</a>
+                <div class="card-body d-flex flex-column justify-content-between p-2">
+                    <h6 class="card-title book-title text-center" style="font-size: 0.9rem;">{{ book.title }}</h6>
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm mt-auto w-100">Подробнее</a>
                 </div>
             </div>
         </div>

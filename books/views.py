@@ -244,7 +244,7 @@ def book_list_reader(request):
 
     books = books.distinct()
 
-    paginator = Paginator(books, 6)
+    paginator = Paginator(books, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
