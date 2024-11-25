@@ -30,10 +30,10 @@
                             </li>
                         {% elif user.role and user.role.role_name == 'Библиотекарь' %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'book_list' %}">Управление книгами</a>
+                                <a class="nav-link" href="{% url 'book_list' %}">Книги</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'book_copy_list' %}">Управление копиями</a>
+                                <a class="nav-link" href="{% url 'book_copy_list' %}">Копии</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'author_list' %}">Авторы</a>
@@ -42,7 +42,7 @@
                                 <a class="nav-link" href="{% url 'genre_list' %}">Жанры</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'edition_list' %}">Издания</a>
+                                <a class="nav-link" href="{% url 'edition_list' %}">Издательства</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'reservation_list' %}">Бронирования</a>

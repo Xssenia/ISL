@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{% if object %}Редактировать{% else %}Добавить{% endif %} издание</h1>
+<h1>{% if object %}Редактировать{% else %}Добавить{% endif %} издательство</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
