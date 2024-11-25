@@ -1,10 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Добавить книгу</h1>
-<form method="post" enctype="multipart/form-data">
+<h1 class="mb-4">Добавить книгу</h1>
+<form method="post" enctype="multipart/form-data" class="row g-4">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Сохранить</button>
+
+    <div class="col-12">
+        <h4 class="fw-bold">Основная информация</h4>
+        <hr>
+    </div>
+    <div class="col-md-6">
+        <label for="id_title" class="form-label fw-bold">Название книги</label>
+        <input type="text" name="title" id="id_title" class="form-control" value="{{ form.instance.title }}">
+    </div>
+    <div class="col-md-6">
+    {{ form.edition.label_tag|safe }}<br>
+    {{ form.edition }}
+</div>
+
+
+    <div class="col-12">
+        <h4 class="fw-bold mt-4">Авторы и Жанры</h4>
+        <hr>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label fw-bold d-block">Авторы</label>
+        <div>
+            {% for author in form.authors %}
+                <div class="form-check">
+                    {{ author.tag }} {{ author.choice_label }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label fw-bold d-block">Жанры</label>
+        <div>
+            {% for genre in form.genres %}
+                <div class="form-check">
+                    {{ genre.tag }} {{ genre.choice_label }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-12">
+        <h4 class="fw-bold mt-4">Дополнительная информация</h4>
+        <hr>
+    </div>
+    <div class="col-md-6">
+        <label for="id_publication_year" class="form-label fw-bold">Год публикации</label>
+        {{ form.publication_year }}
+    </div>
+
+    <div class="col-md-6">
+        <label for="id_cover_image" class="form-label fw-bold">Обложка книги</label>
+        {{ form.cover_image }}
+    </div>
+
+    <div class="col-12">
+        <label for="id_description" class="form-label fw-bold">Описание</label>
+        {{ form.description }}
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
 </form>
 {% endblock %}

@@ -126,7 +126,7 @@ class GenreListView(ListView):
 
 class GenreCreateView(CreateView):
     model = Genre
-    fields = ['genre_name']
+    form_class = GenreForm
     template_name = 'genres/genre_form.html'
     success_url = reverse_lazy('genre_list')
 
@@ -138,7 +138,7 @@ class GenreCreateView(CreateView):
 
 class GenreUpdateView(UpdateView):
     model = Genre
-    fields = ['genre_name']
+    form_class = GenreForm
     template_name = 'genres/genre_form.html'
     success_url = reverse_lazy('genre_list')
 
@@ -159,14 +159,14 @@ class AuthorListView(ListView):
 
 class AuthorCreateView(CreateView):
     model = Author
-    fields = ['author_name']
+    form_class = AuthorForm
     template_name = 'authors/author_form.html'
     success_url = reverse_lazy('author_list')
 
 
 class AuthorUpdateView(UpdateView):
     model = Author
-    fields = ['author_name']
+    form_class = AuthorForm
     template_name = 'authors/author_form.html'
     success_url = reverse_lazy('author_list')
 
@@ -182,14 +182,14 @@ class EditionListView(ListView):
 
 class EditionCreateView(CreateView):
     model = Edition
-    fields = ['edition_name']
+    form_class = EditionForm
     template_name = 'editions/edition_form.html'
     success_url = reverse_lazy('edition_list')
 
 
 class EditionUpdateView(UpdateView):
     model = Edition
-    fields = ['edition_name']
+    form_class = EditionForm
     template_name = 'editions/edition_form.html'
     success_url = reverse_lazy('edition_list')
 
