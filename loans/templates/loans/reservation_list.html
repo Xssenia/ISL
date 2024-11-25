@@ -18,7 +18,7 @@
             {% for reservation in sorted_reservations %}
                 {% if reservation.status.status_name == 'Закрыта' %}
                     <tr class="table-success">
-                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.copy_number }} ({{ reservation.copy.status.status }})</td>
+                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.book_number }} ({{ reservation.copy.status.status }})</td>
                         <td>{{ reservation.reader }}</td>
                         <td>{{ reservation.reservation_date|localize }}</td>
                         <td>{{ reservation.reservation_end_date|localize }}</td>
@@ -26,7 +26,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.copy_number }} ({{ reservation.copy.status.status }})</td>
+                        <td>{{ reservation.copy.book.title }} — Копия {{ reservation.copy.book_number }} ({{ reservation.copy.status.status }})</td>
                         <td>{{ reservation.reader }}</td>
                         <td>{{ reservation.reservation_date|localize }}</td>
                         <td>{{ reservation.reservation_end_date|localize }}</td>
